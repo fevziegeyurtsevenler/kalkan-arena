@@ -1,5 +1,5 @@
 services:
-  bekci-arena:
+  kalkan-arena:
     build: .
     ports: ["127.0.0.1:8010:8000"]   # bind loopback; put Nginx/Cloudflare in front
     env_file: .env

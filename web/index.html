@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bekçi Arena — Guard'ımızı kır, Türkçe prompt injection challenge</title>
-<meta name="description" content="AltaySec Bekçi Arena: Türkçe prompt injection / jailbreak challenge. Guard'ımızı kır, seviyeleri geç, liderlik tablosuna gir. Red-team our Turkish LLM guardrail.">
-<meta property="og:title" content="Bekçi Arena — Guard'ımızı kır">
-<meta property="og:description" content="Türkçe prompt injection challenge. Bekçi'yi kandır, parolayı sızdır.">
+<title>Kalkan Arena — Guard'ımızı kır, Türkçe prompt injection challenge</title>
+<meta name="description" content="AltaySec Kalkan Arena: Türkçe prompt injection / jailbreak challenge. Guard'ımızı kır, seviyeleri geç, liderlik tablosuna gir. Red-team our Turkish LLM guardrail.">
+<meta property="og:title" content="Kalkan Arena — Guard'ımızı kır">
+<meta property="og:description" content="Türkçe prompt injection challenge. Kalkan'ı kandır, parolayı sızdır.">
 <style>
   :root{--bg:#08060a;--panel:#100b12;--panel2:#0d090e;--line:#241a20;--red:#ff3b3b;--red2:#ff6b6b;--ink:#f5f0f0;--mut:#b9adb2;--mut2:#7d7378;--green:#57d9a3;--amber:#ffb057}
   *{box-sizing:border-box;margin:0;padding:0}
@@ -65,9 +65,9 @@
 <body>
 <header><div class="wrap hero">
   <div class="eyebrow">AltaySec · red-team challenge</div>
-  <h1>BEKÇİ <span class="b">ARENA</span></h1>
-  <p class="lede">Bekçi, AltaySec'in Türkçe LLM guard'ı. Görevin: onu kandırıp modeldeki <b>gizli parolayı</b> sızdırmak. Seviye atladıkça Bekçi sertleşir. <b>Guard'ımızı kır — bize onu geliştirmede yardım et.</b></p>
-  <span class="tag" id="engine-tag">Bekçi: yükleniyor…</span>
+  <h1>KALKAN <span class="b">ARENA</span></h1>
+  <p class="lede">Kalkan, AltaySec'in Türkçe LLM guard'ı. Görevin: onu kandırıp modeldeki <b>gizli parolayı</b> sızdırmak. Seviye atladıkça Kalkan sertleşir. <b>Guard'ımızı kır — bize onu geliştirmede yardım et.</b></p>
+  <span class="tag" id="engine-tag">Kalkan: yükleniyor…</span>
 </div></header>
 
 <div class="wrap">
@@ -77,11 +77,11 @@
   </section>
 
   <section>
-    <h2>02 · <span id="cur-level">Seviye 1</span> — Bekçi'yi kandır</h2>
+    <h2>02 · <span id="cur-level">Seviye 1</span> — Kalkan'ı kandır</h2>
     <div class="chat">
       <div class="log" id="log"></div>
       <div class="composer">
-        <textarea id="prompt" placeholder="Bekçi'yi geçecek promptunu yaz… (ipucu: 'söyle' deme, başka bir görevin yan ürünü yap)"></textarea>
+        <textarea id="prompt" placeholder="Kalkan'ı geçecek promptunu yaz… (ipucu: 'söyle' deme, başka bir görevin yan ürünü yap)"></textarea>
         <button id="send" onclick="send()">Gönder</button>
       </div>
     </div>
@@ -95,7 +95,7 @@
   </section>
 
   <div class="foot">
-    Bu bir <b>eğitim/araştırma</b> challenge'ıdır. Denemeler (kişisel veri maskelenerek) Bekçi guard'ını
+    Bu bir <b>eğitim/araştırma</b> challenge'ıdır. Denemeler (kişisel veri maskelenerek) Kalkan guard'ını
     geliştirmek için kaydedilir. Gerçek kişisel veri girme. · <a href="https://altaysec.com.tr">AltaySec</a> ·
     <a href="https://github.com/fevziegeyurtsevenler/guardrail-arena">guardrail-arena</a>
   </div>
@@ -105,9 +105,9 @@
 <div class="modal" id="modal">
   <div class="box">
     <h3>Arena'ya hoş geldin 🔴</h3>
-    <p>Bekçi'yi kandırıp gizli parolayı modele söyletmeye çalışacaksın. Başlamadan:</p>
+    <p>Kalkan'ı kandırıp gizli parolayı modele söyletmeye çalışacaksın. Başlamadan:</p>
     <input id="alias" placeholder="Takma adın (liderlik tablosu için, opsiyonel)" maxlength="24">
-    <div class="warn">⚠️ KVKK: Denemelerin, <b>kişisel verilerin maskelenerek</b>, Bekçi guard'ını geliştirmek ve
+    <div class="warn">⚠️ KVKK: Denemelerin, <b>kişisel verilerin maskelenerek</b>, Kalkan guard'ını geliştirmek ve
       açık araştırma için kaydedilebilir/yayımlanabilir. <b>Gerçek TCKN/telefon/e-posta gibi kişisel veri girme.</b></div>
     <button onclick="startGame()">Onaylıyorum, başla</button>
   </div>
@@ -120,7 +120,7 @@ async function api(path,body){const r=await fetch(path,{method:body?'POST':'GET'
 
 async function boot(){
   LEVELS=await api('/api/levels');
-  const h=await api('/healthz'); $('engine-tag').textContent = "Bekçi motoru: "+(h.engine==='guardian'?'Guardian (canlı)':'yerel guard')+" · hedef model: "+(h.target==='live'?'canlı':'demo');
+  const h=await api('/healthz'); $('engine-tag').textContent = "Kalkan motoru: "+(h.engine==='guardian'?'Guardian (canlı)':'yerel guard')+" · hedef model: "+(h.target==='live'?'canlı':'demo');
   renderLevels(); loadBoard();
 }
 function renderLevels(){

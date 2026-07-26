@@ -1,4 +1,4 @@
-"""Bekçi Arena — a Turkish "red-team our guard" jailbreak challenge that collects (consented,
+"""Kalkan Arena — a Turkish "red-team our guard" jailbreak challenge that collects (consented,
 PII-masked) attack data. Standalone: it never touches the production Guardian (calls it only as an
 optional client via GUARDIAN_URL).
 """
@@ -20,7 +20,7 @@ ADMIN_TOKEN = os.getenv("ADMIN_TOKEN", "")
 RATE_PER_MIN = int(os.getenv("RATE_PER_MIN", "15"))
 WEB = os.path.join(os.path.dirname(__file__), "..", "web")
 
-app = FastAPI(title="Bekçi Arena", docs_url=None, redoc_url=None)
+app = FastAPI(title="Kalkan Arena", docs_url=None, redoc_url=None)
 store.init()
 
 # ---- tiny in-memory per-IP rate limit (swap for Redis in prod) ----
@@ -30,7 +30,7 @@ _hits: dict = {}
 def _ip_hash(req: Request) -> str:
     ip = (req.headers.get("cf-connecting-ip") or req.headers.get("x-forwarded-for", "").split(",")[0]
           or (req.client.host if req.client else "0.0.0.0")).strip()
-    return hashlib.sha256(("bekci" + ip).encode()).hexdigest()[:16]
+    return hashlib.sha256(("kalkan" + ip).encode()).hexdigest()[:16]
 
 
 def _rate_ok(key: str) -> bool:
@@ -104,7 +104,7 @@ def api_attempt(body: AttemptIn, request: Request):
     leaked = False
     reply = ""
     if blocked:
-        reply = f"🛡️ Bekçi seni durdurdu. ({reason})"
+        reply = f"🛡️ Kalkan seni durdurdu. ({reason})"
     else:
         # 2) run the target model with the secret in the system prompt
         system = level.system_template.format(secret=secret)

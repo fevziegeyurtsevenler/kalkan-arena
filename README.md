@@ -1,7 +1,7 @@
-# 🛡️ Bekçi Arena
+# 🛡️ Kalkan Arena
 
 **A Turkish "red-team our guard" prompt-injection challenge — that turns every attempt into training
-data.** Players try to trick a target LLM into leaking a per-session secret; the AltaySec **Bekçi**
+data.** Players try to trick a target LLM into leaking a per-session secret; the AltaySec **Kalkan**
 guard sits in front and gets harder each level. Every (consented, PII-masked) attempt is logged —
 especially the ones that get through — so real, human-invented Turkish attacks flow back into
 improving the guard.
@@ -21,7 +21,7 @@ and can *optionally* call the real Guardian API as a read-only client (`GUARDIAN
 
 ## How it works
 ```
-player prompt → Bekçi guard (level threshold + rules + anti-evasion) → blocked?  → log + "durduruldu"
+player prompt → Kalkan guard (level threshold + rules + anti-evasion) → blocked?  → log + "durduruldu"
                                         └ passed → target LLM (secret in system prompt)
                                                      → canary oracle: did it leak the secret? → WIN
                                                      → log EVERYTHING (masked), esp. passed prompts
