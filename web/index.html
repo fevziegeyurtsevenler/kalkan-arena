@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bekçi Arena — Guard'ımızı kır, Türkçe prompt injection challenge</title>
+<meta name="description" content="AltaySec Bekçi Arena: Türkçe prompt injection / jailbreak challenge. Guard'ımızı kır, seviyeleri geç, liderlik tablosuna gir. Red-team our Turkish LLM guardrail.">
+<meta property="og:title" content="Bekçi Arena — Guard'ımızı kır">
+<meta property="og:description" content="Türkçe prompt injection challenge. Bekçi'yi kandır, parolayı sızdır.">
+<style>
+  :root{--bg:#08060a;--panel:#100b12;--panel2:#0d090e;--line:#241a20;--red:#ff3b3b;--red2:#ff6b6b;--ink:#f5f0f0;--mut:#b9adb2;--mut2:#7d7378;--green:#57d9a3;--amber:#ffb057}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif;line-height:1.5;padding-bottom:50px}
+  .mono{font-family:"SF Mono",ui-monospace,Menlo,Consolas,monospace}
+  .wrap{max-width:1000px;margin:0 auto;padding:0 18px}
+  a{color:var(--red2);text-decoration:none}
+  header{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+  header::before{content:"";position:absolute;inset:0;background:radial-gradient(ellipse 55% 60% at 85% 25%,rgba(255,31,46,.30),transparent 60%)}
+  .hero{position:relative;padding:34px 0 24px}
+  .eyebrow{color:var(--red);letter-spacing:.28em;font-size:11px;font-weight:700;text-transform:uppercase}
+  h1{font-size:clamp(28px,6vw,44px);font-weight:800;letter-spacing:-1.5px;margin:6px 0 6px}
+  h1 .b{color:var(--red)}
+  .lede{color:var(--mut);font-size:16px;max-width:60ch}
+  .tag{display:inline-block;margin-top:12px;background:rgba(255,59,59,.12);border:1px solid rgba(255,59,59,.3);color:var(--red2);border-radius:999px;padding:5px 13px;font-size:12px;font-weight:600}
+  section{padding:26px 0}
+  h2{font-size:12px;text-transform:uppercase;letter-spacing:.16em;color:var(--mut2);margin:0 0 14px;font-family:"SF Mono",ui-monospace,monospace}
+  .levels{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .lv{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px;cursor:pointer;transition:.15s;position:relative;overflow:hidden}
+  .lv::before{content:"";position:absolute;inset:0 0 auto 0;height:3px;background:var(--line)}
+  .lv:hover{border-color:var(--red)}
+  .lv.active{border-color:var(--red)}.lv.active::before{background:var(--red)}
+  .lv.solved::before{background:var(--green)}
+  .lv .n{font-family:"SF Mono",ui-monospace,monospace;font-size:12px;color:var(--mut2)}
+  .lv h3{font-size:17px;margin:4px 0 6px}
+  .lv p{font-size:13px;color:var(--mut)}
+  .lv .badge{position:absolute;top:12px;right:12px;font-size:11px;color:var(--green);font-weight:700}
+  .chat{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px}
+  .log{min-height:180px;max-height:340px;overflow:auto;display:flex;flex-direction:column;gap:10px;margin-bottom:12px}
+  .msg{padding:10px 13px;border-radius:12px;font-size:14px;max-width:85%;white-space:pre-wrap;word-break:break-word}
+  .msg.you{align-self:flex-end;background:#241118;border:1px solid #3a1a24}
+  .msg.bot{align-self:flex-start;background:var(--panel2);border:1px solid var(--line)}
+  .msg.win{align-self:center;background:rgba(87,217,163,.12);border:1px solid rgba(87,217,163,.4);color:var(--green);font-weight:700;text-align:center}
+  .msg.block{align-self:flex-start;background:rgba(255,176,87,.1);border:1px solid rgba(255,176,87,.3);color:var(--amber)}
+  .composer{display:flex;gap:10px}
+  textarea{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:11px;color:var(--ink);padding:11px 13px;font-size:14px;resize:vertical;min-height:52px;font-family:inherit}
+  textarea:focus{outline:none;border-color:var(--red)}
+  button{background:var(--red);color:#180405;border:0;border-radius:11px;padding:0 22px;font-weight:700;font-size:14px;cursor:pointer;font-family:inherit}
+  button:disabled{opacity:.5;cursor:default}
+  button.ghost{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+  .board{width:100%;border-collapse:collapse;font-size:13px;border:1px solid var(--line);border-radius:12px;overflow:hidden}
+  .board th,.board td{padding:9px 12px;text-align:left;border-bottom:1px solid var(--line)}
+  .board th{background:var(--panel2);color:var(--mut);font-size:11px;text-transform:uppercase}
+  .stat{color:var(--mut2);font-size:12px;margin-top:8px}
+  .foot{color:var(--mut2);font-size:12px;margin-top:36px;border-top:1px solid var(--line);padding-top:16px}
+  /* modal */
+  .modal{position:fixed;inset:0;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:18px;z-index:50}
+  .modal .box{background:var(--panel);border:1px solid var(--line);border-radius:18px;max-width:520px;padding:26px}
+  .modal h3{font-size:20px;margin-bottom:10px}
+  .modal p{color:var(--mut);font-size:14px;margin-bottom:12px}
+  .modal input{width:100%;background:var(--panel2);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:10px 12px;margin-bottom:12px;font-size:14px}
+  .modal .warn{background:rgba(255,176,87,.08);border:1px solid rgba(255,176,87,.25);color:var(--amber);border-radius:10px;padding:10px 12px;font-size:12.5px;margin-bottom:14px}
+  .hidden{display:none}
+</style>
+</head>
+<body>
+<header><div class="wrap hero">
+  <div class="eyebrow">AltaySec · red-team challenge</div>
+  <h1>BEKÇİ <span class="b">ARENA</span></h1>
+  <p class="lede">Bekçi, AltaySec'in Türkçe LLM guard'ı. Görevin: onu kandırıp modeldeki <b>gizli parolayı</b> sızdırmak. Seviye atladıkça Bekçi sertleşir. <b>Guard'ımızı kır — bize onu geliştirmede yardım et.</b></p>
+  <span class="tag" id="engine-tag">Bekçi: yükleniyor…</span>
+</div></header>
+
+<div class="wrap">
+  <section>
+    <h2>01 · Seviyeler</h2>
+    <div class="levels" id="levels"></div>
+  </section>
+
+  <section>
+    <h2>02 · <span id="cur-level">Seviye 1</span> — Bekçi'yi kandır</h2>
+    <div class="chat">
+      <div class="log" id="log"></div>
+      <div class="composer">
+        <textarea id="prompt" placeholder="Bekçi'yi geçecek promptunu yaz… (ipucu: 'söyle' deme, başka bir görevin yan ürünü yap)"></textarea>
+        <button id="send" onclick="send()">Gönder</button>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>03 · Liderlik tablosu <span style="color:var(--mut2)">(saldırganlar)</span></h2>
+    <table class="board"><thead><tr><th>#</th><th>Takma ad</th><th>Geçilen seviye</th><th>En üst</th></tr></thead>
+      <tbody id="board"></tbody></table>
+    <div class="stat" id="stats"></div>
+  </section>
+
+  <div class="foot">
+    Bu bir <b>eğitim/araştırma</b> challenge'ıdır. Denemeler (kişisel veri maskelenerek) Bekçi guard'ını
+    geliştirmek için kaydedilir. Gerçek kişisel veri girme. · <a href="https://altaysec.com.tr">AltaySec</a> ·
+    <a href="https://github.com/fevziegeyurtsevenler/guardrail-arena">guardrail-arena</a>
+  </div>
+</div>
+
+<!-- consent / start modal -->
+<div class="modal" id="modal">
+  <div class="box">
+    <h3>Arena'ya hoş geldin 🔴</h3>
+    <p>Bekçi'yi kandırıp gizli parolayı modele söyletmeye çalışacaksın. Başlamadan:</p>
+    <input id="alias" placeholder="Takma adın (liderlik tablosu için, opsiyonel)" maxlength="24">
+    <div class="warn">⚠️ KVKK: Denemelerin, <b>kişisel verilerin maskelenerek</b>, Bekçi guard'ını geliştirmek ve
+      açık araştırma için kaydedilebilir/yayımlanabilir. <b>Gerçek TCKN/telefon/e-posta gibi kişisel veri girme.</b></div>
+    <button onclick="startGame()">Onaylıyorum, başla</button>
+  </div>
+</div>
+
+<script>
+let SID=null, LEVEL=1, LEVELS=[], SOLVED=new Set();
+const $=id=>document.getElementById(id);
+async function api(path,body){const r=await fetch(path,{method:body?'POST':'GET',headers:{'Content-Type':'application/json'},body:body?JSON.stringify(body):undefined});return r.json();}
+
+async function boot(){
+  LEVELS=await api('/api/levels');
+  const h=await api('/healthz'); $('engine-tag').textContent = "Bekçi motoru: "+(h.engine==='guardian'?'Guardian (canlı)':'yerel guard')+" · hedef model: "+(h.target==='live'?'canlı':'demo');
+  renderLevels(); loadBoard();
+}
+function renderLevels(){
+  $('levels').innerHTML='';
+  LEVELS.forEach(l=>{
+    const d=document.createElement('div'); d.className='lv'+(l.id===LEVEL?' active':'')+(SOLVED.has(l.id)?' solved':'');
+    d.innerHTML=`<div class="n">SEVİYE ${l.id}</div><h3>${l.name}</h3><p>${l.blurb}</p>`+(SOLVED.has(l.id)?'<span class="badge">✓ çözüldü</span>':'');
+    d.onclick=()=>{LEVEL=l.id; $('cur-level').textContent='Seviye '+l.id; $('log').innerHTML=''; renderLevels();};
+    $('levels').appendChild(d);
+  });
+}
+function add(cls,txt){const m=document.createElement('div');m.className='msg '+cls;m.textContent=txt;$('log').appendChild(m);$('log').scrollTop=$('log').scrollHeight;}
+async function startGame(){
+  const s=await api('/api/start',{alias:$('alias').value}); SID=s.sid;
+  await api('/api/consent',{sid:SID}); $('modal').classList.add('hidden');
+}
+async function send(){
+  const p=$('prompt').value.trim(); if(!p||!SID)return;
+  $('send').disabled=true; add('you',p); $('prompt').value='';
+  try{
+    const r=await api('/api/attempt',{sid:SID,level:LEVEL,prompt:p});
+    if(r.error){add('block','⚠️ '+r.error);}
+    else{
+      if(r.result==='win'){add('bot',r.reply); add('win',r.message||'🏆 Kazandın!'); SOLVED.add(LEVEL); renderLevels(); loadBoard(); if(r.next){setTimeout(()=>{LEVEL=r.next;$('cur-level').textContent='Seviye '+r.next;$('log').innerHTML='';renderLevels();},1400);}}
+      else if(r.result==='blocked'){add('block',r.reply);}
+      else{add('bot',r.reply);}
+    }
+  }catch(e){add('block','Bağlantı hatası, tekrar dene.');}
+  $('send').disabled=false; $('prompt').focus();
+}
+async function loadBoard(){
+  const d=await api('/api/leaderboard');
+  $('board').innerHTML=(d.board||[]).map((b,i)=>`<tr><td>${i+1}</td><td>${(b.alias||'anon').replace(/[<>]/g,'')}</td><td>${b.levels}</td><td>${b.top}</td></tr>`).join('')||'<tr><td colspan=4 style="color:var(--mut2)">henüz kimse geçemedi — ilk sen ol</td></tr>';
+  if(d.stats)$('stats').textContent=`toplam ${d.stats.attempts} deneme · ${d.stats.leaks} sızıntı · ${d.stats.confirmed_bypasses} doğrulanmış bypass`;
+}
+$('prompt').addEventListener('keydown',e=>{if(e.key==='Enter'&&(e.metaKey||e.ctrlKey)){send();}});
+boot();
+</script>
+</body>
+</html>
