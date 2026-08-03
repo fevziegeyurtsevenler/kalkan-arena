@@ -65,3 +65,21 @@ Guardian datasheet number. Related: [guardrail-arena](https://github.com/fevzieg
 · [AltaySec](https://altaysec.com.tr).
 
 Apache-2.0 · by **[AltaySec](https://altaysec.com.tr)**.
+
+---
+
+## İlgili AltaySec Kaynakları
+
+- 📖 [Bekçi: Türkçe LLM Prompt Injection Lab Mimarisi](https://altaysec.com.tr/arastirmalar/bekci-llm-prompt-injection-lab) — konunun derinlemesine Türkçe analizi
+- 🌐 [AltaySec Araştırmalar](https://altaysec.com.tr/arastirmalar/) — Türkçe yapay zekâ güvenliği yazıları
+
+## Atıf
+
+```bibtex
+@software{altaysec_kalkan_arena_2026,
+  author = {{AltaySec}},
+  title  = {kalkan-arena},
+  year   = {2026},
+  url    = {https://github.com/fevziegeyurtsevenler/kalkan-arena}
+}
+```
